@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 echo "Removing old files..."
-rm -v output/*.html
+rm -v ../docs/*.html
 rm -v temp/*.temp
 
 echo "Compiling links..."
@@ -19,10 +19,10 @@ for infile in sources/*.md; do
     infile=$(basename $infile)
     file=${infile%.*}
     outfile=${file}.html
-    pandoc -o output/$outfile sources/$infile --standalone --standalone --mathml --template temp/template.temp --metadata pagetitle=$file -c resources/styles.css
+    pandoc -o ../docs/$outfile sources/$infile --standalone --standalone --mathml --template temp/template.temp --metadata pagetitle=$file -c resources/styles.css
 done
 
 echo "Copying resources..."
-cp -r resources output
+cp -r resources ../docs
 
 echo "Make complete!"
