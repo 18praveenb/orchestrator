@@ -1,5 +1,7 @@
 # Pytorch Tutorial! (WIP)
 
+# !!! This is not finished. Go to Meeting 1.
+
 ## Installation
 
 The `pip` packages are `torch` and `torchvision`.
