@@ -24,27 +24,66 @@
 </span><hr>
 <h1 id="setting-up-ssh-with-github">Setting up SSH with GitHub</h1>
 <p><a href="https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh">Wonderful tutorial from Github itself</a></p>
+<p><strong>Do this first!</strong> If you have an ssh key that’s in <code>ssh-agent</code> you are less likely to get a password prompt when ssh’ing into CSUA. It’s also necessary if you want to push to Github from CSUA.</p>
 <h1 id="how-to-set-up-csua">How to set up CSUA</h1>
 <ol type="1">
 <li>Create an account</li>
-<li>Create a public/private SSH key pair <a href="https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">GitHub tutorial</a></li>
-<li>Copy the public key. SSH to latte, create a `~/.ssh/authorized_keys’ file and copy the public key there.</li>
-<li>It should be possible to <code>ssh</code> into latte now. For convenience, you could add the following to your <code>~/.ssh/config</code> file so that <code>ssh csua</code> just works.</li>
+<li>Copy the <code>id_rsa.pub</code> file you created earlier. SSH to latte, create a `~/.ssh/authorized_keys’ file and copy the public key there.</li>
+<li>It should be possible to <code>ssh</code> to <code>[yourusername]@latte.csua.berkeley.edu</code> now. For convenience, you could add the following to your <code>~/.ssh/config</code> file so that <code>ssh csua</code> just works.</li>
 </ol>
 <pre><code>Host latte
   HostName latte.csua.berkeley.edu
   User YOUR_USER_NAME
   IdentityFile PATH/TO/PRIVATE_KEY</code></pre>
+<p>Other tips:</p>
+<p><code>ssh -A</code> will keep your credentials. So, for instance, if you have Github SSH acccess on your machine, <code>-A</code> will allow you to push to Github from your CSUA machine.</p>
+<p><code>ssh -i path/to/key</code> if you need to authenticate with a specific key.</p>
+<p>There is another machine, <code>[yourusername]@soda.csua.berkeley.edu</code> which does not have GPUs. It’s kind of like an extra hive machine. Maybe extra CPU for your 170 project :)</p>
 <h1 id="how-to-set-up-jupyter">How to set up Jupyter</h1>
 <p>Open two terminal windows, A and B.</p>
 <p>In window A, <code>ssh latte</code> (or <code>ssh username@latte.csua.berkeley.edu</code>) and then install jupyter.</p>
 <p>Run <code>jupyter notebook --no-browser</code> and check which port it’s using (in its terminal output).</p>
 <p>There should be a line <code>http://localhost:8888/?token=088de52ac910000087c9c24a15de8a0c68665ab1c2ee0687</code> or something like that.</p>
 <p>Then in window B, run <code>ssh -N -L [to]:localhost:[from] [username]@latte.csua.berkeley.edu</code></p>
-<p><strong>to</strong> is the port you want to connect Jupyter to on your machine. <strong>from</strong> is the port that Jupyter is running on CSUA (the number that you saw earlier).</p>
+<p><strong>from</strong> is the port that Jupyter is running on CSUA (the number that you saw earlier). <strong>to</strong> is the port you want to connect Jupyter to on your machine. Ideally, you would set this to <strong>from</strong> as it makes everything easier. But if <strong>from</strong> is in use, you can find an open port by</p>
+<ol type="1">
+<li>Run Jupyter on your machine, note which port it uses</li>
+<li>Kill Jupyter, use that port as <strong>from</strong>.</li>
+</ol>
 <p>Keep the ssh running. Now, in a browser, copy the line from above, but change the port number to <strong>to</strong>.</p>
+<blockquote>
+<p><strong>Example</strong> http://localhost:8888/?token=088de52ac910000087c9c24a15de8a0c68665ab1c2ee0687</p>
+<p>so <strong>from</strong> is 8888.</p>
+<p>but <strong>to</strong> is 8890.</p>
+<p>then you would want to open the URL</p>
+<p>http://localhost:8890/?token=088de52ac910000087c9c24a15de8a0c68665ab1c2ee0687</p>
+<p>in a browser.</p>
+</blockquote>
 <p>It should connect to Jupyter.</p>
+<h3 id="it-asked-for-a-token">It asked for a token??</h3>
+<p>This happens sometimes.</p>
+<ol type="1">
+<li>Make sure you forwarded the correct <strong>from</strong> port. If you are connecting to someone else’s CSUA server, your token will be rejected.</li>
+<li>Make sure you copied the full token in the URL.</li>
+<li>Try using <code>localhost:[to]:localhost:[from]</code> in the <code>ssh -N -L</code> command.</li>
+<li>Try entering the token manually when Jupyter asks for it.</li>
+</ol>
 <h1 id="working-with-cuda">Working with CUDA</h1>
-<p><code>nvidia-smi</code></p>
+<p><code>nvidia-smi</code> is a wonderful CUDA command. It will list the GPU usage.</p>
+<figure>
+<img src="resources/csua/nvidia-smi.png" alt="" /><figcaption>nvidia-smi output</figcaption>
+</figure>
+<p>You want to use GPUs with low <code>Volatile GPU-Util</code> and low <code>Memory-Usage</code>.</p>
+<p>However, CSUA will by default assign you two random GPUs.</p>
+<p>You can see which ones these are with <code>echo $CUDA_VISIBLE_DEVICES</code>.</p>
+<p>If these are busy GPUs, or they are two of the same GPU (e.g. having a <code>CUDA_VISIBLE_DEVICES</code> of <code>0,0</code> will confuse Pytorch!) you may want to reassign them.</p>
+<p>If you want to use more than two GPUs… well once I used 8 GPUs and my program was canceled along with a warning message. Be a good citizen :) many people want to ML on this cluster!</p>
+<p>If you want to set your GPUs to, say, 6 and 7 run the command <code>export CUDA_VISIBLE_DEVICES=6,7</code>. It’s that simple! There are 8 GPUs available, numbered 0 through 7.</p>
+<h1 id="tensorflow-pytorch-and-virtualenv-quickstart">Tensorflow, Pytorch, and virtualenv quickstart</h1>
+<p>Create a virtualenv with <code>python3 -m venv [name-of-env]</code>. When you’re in the virtualenv your terminal will have a <code>(name-of-env)</code> before the prompt.</p>
+<p>You can exit the environment with <code>deactivate</code>, and enter it with <code>source [name-of-env]/bin/activate</code>.</p>
+<p>Install Pytorch and Tensorflow via pip.</p>
+<p>Then run the following notebook to make sure GPU access is working:</p>
+<p>(coming soon!)</p>
 </body>
 </html>

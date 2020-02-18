@@ -25,6 +25,6 @@ for infile in sources/*.md; do
 done
 
 echo "Copying resources..."
-cp -r resources ../docs
+cp -r sources/resources ../docs
 
 echo "Make complete!"
