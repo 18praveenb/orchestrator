@@ -32,5 +32,13 @@
   User YOUR_USER_NAME
   IdentityFile PATH/TO/PRIVATE_KEY</code></pre>
 <h1 id="how-to-set-up-jupyter">How to set up Jupyter</h1>
+<p>Open two terminal windows, A and B.</p>
+<p>In window A, <code>ssh latte</code> (or <code>ssh username@latte.csua.berkeley.edu</code>) and then install jupyter.</p>
+<p>Run <code>jupyter notebook --no-browser</code> and check which port it’s using (in its terminal output).</p>
+<p>There should be a line <code>http://localhost:8888/?token=088de52ac910000087c9c24a15de8a0c68665ab1c2ee0687</code> or something like that.</p>
+<p>Then in window B, run <code>ssh -N -L [to]:localhost:[from] [username]@latte.csua.berkeley.edu</code></p>
+<p><strong>to</strong> is the port you want to connect Jupyter to on your machine. <strong>from</strong> is the port that Jupyter is running on CSUA (the number that you saw earlier).</p>
+<p>Keep the ssh running. Now, in a browser, copy the line from above, but change the port number to <strong>to</strong>.</p>
+<p>It should connect to Jupyter.</p>
 </body>
 </html>
