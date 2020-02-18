@@ -33,3 +33,7 @@ Then in window B, run `ssh -N -L [to]:localhost:[from] [username]@latte.csua.ber
 Keep the ssh running. Now, in a browser, copy the line from above, but change the port number to **to**.
 
 It should connect to Jupyter.
+
+# Working with CUDA
+
+`nvidia-smi`

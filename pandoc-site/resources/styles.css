@@ -1,3 +1,39 @@
-* {
-    font-family: Arial, sans-serif
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+:root {
+    color-scheme: light dark;
+}
+
+html body {
+    font-family: "Roboto", sans-serif;
+    padding: 20px;
+    word-wrap: break-word;
+}
+
+code {
+    font-family: Menlo, monospace
+}
+
+blockquote {
+    border-left-style: solid;
+    margin-left: 20px;
+    padding-left: 20px;
+}
+
+.toc {
+    display: block;
+}
+
+.toc_entry {
+    
+}
+
+@media (prefers-color-scheme: dark) {
+    a {
+        color: cyan;
+    }
+
+    a:visited {
+        color: pink;
+    }
 }

@@ -5,12 +5,14 @@ rm -v ../docs/*.html
 rm -v temp/*.temp
 
 echo "Compiling links..."
+echo "<span class=\"toc\">" >> temp/links.temp
 for infile in sources/*.md; do
     infile=$(basename $infile)
     file=${infile%.*}
     outfile=${file}.html
-    echo "<a href=\"${outfile}\">${file}</a><br />" >> temp/links.temp
+    echo "<a href=\"${outfile}\" class=\"toc_entry\">${file}</a><br />" >> temp/links.temp
 done
+echo "</span><hr>" >> temp/links.temp
 
 cat t0.html temp/links.temp t1.html > temp/template.temp
 
