@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Pytorch Tutorial</title>
+  <title>csua</title>
   <style>
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -20,13 +20,17 @@
 <a href="Pytorch Tutorial.html">Pytorch Tutorial</a><br />
 <a href="csua.html">csua</a><br />
 <a href="index.html">index</a><br />
-<h1 id="pytorch-tutorial-wip">Pytorch Tutorial! (WIP)</h1>
-<h1 id="this-is-not-finished.-go-to-meeting-1.">!!! This is not finished. Go to Meeting 1.</h1>
-<h2 id="installation">Installation</h2>
-<p>The <code>pip</code> packages are <code>torch</code> and <code>torchvision</code>.</p>
-<p>If you have a Linux machine with GPU and want CUDA support, you might need to follow different install instructions. Check <a href="https://pytorch.org/get-started/locally/">this website</a> for details.</p>
-<h2 id="introduction-to-pytorch">Introduction to Pytorch</h2>
-<p><em>Adapted from <a href="https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html">Pytorch 60 minute blitz</a></em></p>
-<p>Download the <a href="resources/pytorch_tutorial/introduction.ipynb">notebook</a>!</p>
+<h1 id="how-to-set-up-csua">How to set up CSUA</h1>
+<ol type="1">
+<li>Create an account</li>
+<li>Create a public/private SSH key pair <a href="https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">GitHub tutorial</a></li>
+<li>Copy the public key. SSH to latte, create a `~/.ssh/authorized_keys’ file and copy the public key there.</li>
+<li>It should be possible to <code>ssh</code> into latte now. For convenience, you could add the following to your <code>~/.ssh/config</code> file so that <code>ssh csua</code> just works.</li>
+</ol>
+<pre><code>Host latte
+  HostName latte.csua.berkeley.edu
+  User YOUR_USER_NAME
+  IdentityFile PATH/TO/PRIVATE_KEY</code></pre>
+<h1 id="how-to-set-up-jupyter">How to set up Jupyter</h1>
 </body>
 </html>
