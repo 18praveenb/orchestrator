@@ -10,7 +10,7 @@ for infile in sources/*.md; do
     infile=$(basename $infile)
     file=${infile%.*}
     outfile=${file}.html
-    echo "<a href=\"${outfile}\" class=\"toc_entry\">${file}</a><br />" >> temp/links.temp
+    echo "<a href=\"./${outfile}\" class=\"toc_entry\">${file}</a><br />" >> temp/links.temp
 done
 echo "</span><hr>" >> temp/links.temp
 
