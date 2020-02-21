@@ -72,7 +72,7 @@ This happens sometimes.
 
 `nvidia-smi` is a wonderful CUDA command. It will list the GPU usage.
 
-![nvidia-smi output](resources/csua/nvidia-smi.png)
+![nvidia-smi output](resources/csua/nvidia-smi.png){.invert}
 
 You want to use GPUs with low `Volatile GPU-Util` and low `Memory-Usage`.
 

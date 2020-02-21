@@ -28,6 +28,11 @@ blockquote {
     
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 @media (prefers-color-scheme: dark) {
     a {
         color: cyan;
@@ -35,5 +40,10 @@ blockquote {
 
     a:visited {
         color: pink;
+    }
+
+    .invert {
+        -webkit-filter: invert(1);
+        filter: invert(1);
     }
 }

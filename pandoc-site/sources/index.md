@@ -1,11 +1,3 @@
-Index and useful resources
+# Orchestrator
 
-# Universal music translation networ
-
-[GitHub](https://github.com/facebookresearch/music-translation)
-
-# Seq2Seq Music Style Transfer
-
-# Pytorch
-
-[Website](pytorch.org)
+## Most recent meeting: [Feb. 17](2020-02-17 Meeting 1.html)

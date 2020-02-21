@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>_pytorch</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="resources/styles.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body><span class="toc">
+<a href="./2020-02-17 Meeting 1.html" class="toc_entry">2020-02-17 Meeting 1</a><br />
+<a href="./csua.html" class="toc_entry">csua</a><br />
+<a href="./index.html" class="toc_entry">index</a><br />
+</span><hr>
+<h1 id="pytorch-tutorial"><a href="pytorch"></a><a href="https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html">Pytorch tutorial</a></h1>
+<ul>
+<li>The tutorial has links to Jupyter notebooks and Google Colab notebooks!</li>
+<li>If running in Colab, be sure to enable the GPU (Runtime &gt; Change runtime type)</li>
+</ul>
+<h2 id="summaries-key-takeaways">Summaries / key takeaways</h2>
+<h3 id="what-is-pytorch"><a href="https://pytorch.org/tutorials/beginner/blitz/tensor_tutorial.html#sphx-glr-beginner-blitz-tensor-tutorial-py">What is Pytorch?</a></h3>
+<p>Make sure you know how to do the following:</p>
+<ul>
+<li>How to construct empty, random, all-ones, and all-zeros tensors</li>
+<li>How to specify tensor datatype</li>
+<li>Create a tensor with the same shape as another tensor, but a different datatype</li>
+<li>Look up tensor operations</li>
+<li>Add, subtract and <a href="https://stackoverflow.com/questions/44524901/how-to-do-product-of-matrices-in-pytorch">multiply</a> tensors</li>
+<li>Convert between Numpy arrays and tensors</li>
+<li>Move tensors between CPU and GPU</li>
+</ul>
+<h3 id="autograd"><a href="https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html#sphx-glr-beginner-blitz-autograd-tutorial-py">Autograd</a></h3>
+<ul>
+<li>Useful takeaways from this tutorial:
+<ul>
+<li><code>with torch.no_grad()</code></li>
+<li><code>requires_grad</code> determines whether the gradient is computed.</li>
+</ul></li>
+<li>Don’t know how important the other stuff is. Part 3 will go into how weight updates etc. is done in practice.</li>
+</ul>
+<h3 id="neural-networks"><a href="https://colab.research.google.com/github/pytorch/tutorials/blob/gh-pages/_downloads/neural_networks_tutorial.ipynb#scrollTo=pFyfk2z9r48d">Neural Networks</a></h3>
+<ul>
+<li>Notice how they define the network as a class.</li>
+<li>Dense layers are called “Linear”</li>
+<li>What the network actually does is in “forward”
+<ul>
+<li>Layers that don’t need weights (e.g. max_pool) aren’t members of the class</li>
+<li>E.g. <code>F.max_pool2d</code> is used in <code>forward</code> but not defined in <code>__init__</code></li>
+</ul></li>
+<li><code>.parameters()</code> gets weights</li>
+<li>Using <code>zero_grad</code> is important at the start of each training loop. I copied the training loop from the end of the document, it’s worth remembering.</li>
+</ul>
+<pre><code>optimizer.zero_grad() # Zero gradients
+output = net(input)
+loss = criterion(output, target) # Compute loss
+loss.backward() # Backprop
+optimizer.step() # Update step</code></pre>
+<h3 id="training-a-classifier"><a href="https://colab.research.google.com/github/pytorch/tutorials/blob/gh-pages/_downloads/cifar10_tutorial.ipynb">Training a Classifier</a></h3>
+<ul>
+<li>Coming soon</li>
+</ul>
+</body>
+</html>
