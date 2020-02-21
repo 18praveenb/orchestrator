@@ -6,7 +6,7 @@ rm -v temp/*.temp
 
 echo "Compiling links..."
 echo "<span class=\"toc\">" >> temp/links.temp
-for infile in sources/[^_]*.md; do
+for infile in sources/[^-]*.md; do
     infile=$(basename $infile)
     file=${infile%.*}
     outfile=${file}.html
