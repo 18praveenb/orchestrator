@@ -6,7 +6,7 @@ rm -v temp/*.temp
 
 echo "Compiling links..."
 echo "<span class=\"toc\">" >> temp/links.temp
-for infile in sources/[^-]*.md; do
+for infile in sources/[^_]*.md; do
     infile=$(basename $infile)
     file=${infile%.*}
     outfile=${file}.html
@@ -17,11 +17,11 @@ echo "</span><hr>" >> temp/links.temp
 cat t0.html temp/links.temp t1.html > temp/template.temp
 
 echo "Generating outputs..."
-for infile in sources/*.md; do
+for infile in sources/*.md*; do
     infile=$(basename $infile)
     file=${infile%.*}
-    outfile=${file}.html
-    pandoc -o ../docs/$outfile sources/$infile --standalone --standalone --mathml --template temp/template.temp --metadata pagetitle=$file -c resources/styles.css
+    outfile=${file#_}.html
+    pandoc -o ../docs/$outfile sources/$infile --standalone --standalone --mathml --template temp/template.temp --metadata pagetitle=${file#_} -c resources/styles.css
 done
 
 echo "Copying resources..."
