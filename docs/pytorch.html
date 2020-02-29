@@ -18,9 +18,10 @@
 </head>
 <body><span class="toc">
 <a href="./2020-02-17 Meeting 1.html" class="toc_entry">2020-02-17 Meeting 1</a><br />
+<a href="./2020-02-29 Meeting 2.html" class="toc_entry">2020-02-29 Meeting 2</a><br />
 <a href="./csua.html" class="toc_entry">csua</a><br />
 <a href="./index.html" class="toc_entry">index</a><br />
-</span><hr>
+</span>
 <h1 id="pytorch-tutorial"><a href="https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html">Pytorch tutorial</a></h1>
 <ul>
 <li>The tutorial has links to Jupyter notebooks and Google Colab notebooks!</li>
@@ -66,7 +67,13 @@ loss.backward() # Backprop
 optimizer.step() # Update step</code></pre>
 <h3 id="training-a-classifier"><a href="https://colab.research.google.com/github/pytorch/tutorials/blob/gh-pages/_downloads/cifar10_tutorial.ipynb">Training a Classifier</a></h3>
 <ul>
-<li>Coming soon</li>
+<li><a href="https://pytorch.org/docs/stable/notes/serialization.html">Saving and loading</a></li>
+<li><a href="https://pytorch.org/docs/stable/torchvision/index.html">torchvision</a> is pretty good for computer vision</li>
+</ul>
+<h3 id="datasets-and-parallelization"><a href="https://pytorch.org/tutorials/beginner/blitz/data_parallel_tutorial.html#sphx-glr-beginner-blitz-data-parallel-tutorial-py">Datasets and Parallelization</a></h3>
+<ul>
+<li>DataLoader and Dataset. Basically, create a Dataset that provides the data, and DataLoader can do shuffling and batching on that dataset.</li>
+<li>DataParallel splits batches and distributes them among GPUs. This can be useful since CSUA allows 2 GPUs per person by default!</li>
 </ul>
 </body>
 </html>

@@ -39,4 +39,9 @@ optimizer.step() # Update step
 ```
 
 ### [Training a Classifier](https://colab.research.google.com/github/pytorch/tutorials/blob/gh-pages/_downloads/cifar10_tutorial.ipynb)
-- Coming soon
+- [Saving and loading](https://pytorch.org/docs/stable/notes/serialization.html)
+- [torchvision](https://pytorch.org/docs/stable/torchvision/index.html) is pretty good for computer vision
+
+### [Datasets and Parallelization](https://pytorch.org/tutorials/beginner/blitz/data_parallel_tutorial.html#sphx-glr-beginner-blitz-data-parallel-tutorial-py)
+- DataLoader and Dataset. Basically, create a Dataset that provides the data, and DataLoader can do shuffling and batching on that dataset.
+- DataParallel splits batches and distributes them among GPUs. This can be useful since CSUA allows 2 GPUs per person by default! 

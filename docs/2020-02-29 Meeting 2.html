@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>2020-02-29 Meeting 2</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="resources/styles.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body><span class="toc">
+<a href="./2020-02-17 Meeting 1.html" class="toc_entry">2020-02-17 Meeting 1</a><br />
+<a href="./2020-02-29 Meeting 2.html" class="toc_entry">2020-02-29 Meeting 2</a><br />
+<a href="./csua.html" class="toc_entry">csua</a><br />
+<a href="./index.html" class="toc_entry">index</a><br />
+</span>
+<h1 id="week-2-meeting-229">Week 2 Meeting 2/29</h1>
+<h2 id="agenda">Agenda</h2>
+<table>
+<tbody>
+<tr class="odd">
+<td>10:10 - 10:30</td>
+<td>Discuss Seq2Seq</td>
+</tr>
+<tr class="even">
+<td>10:30 - 11:30</td>
+<td>Seq2Seq tutorial</td>
+</tr>
+<tr class="odd">
+<td>11:30 - 12:30</td>
+<td>ToneNet</td>
+</tr>
+<tr class="even">
+<td>12:30 - 1:00</td>
+<td>Discuss UMTN paper</td>
+</tr>
+</tbody>
+</table>
+<h2 id="seq2seq-overview"><a href="https://arxiv.org/pdf/1409.3215.pdf">Seq2Seq</a> Overview</h2>
+<h3 id="autoregressive-models"><a href="https://www.investopedia.com/terms/a/autoregressive.asp">Autoregressive models</a></h3>
+<ul>
+<li>For time series data <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(x)</annotation></semantics></math>, predicting <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(x + 1)</annotation></semantics></math> using <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(1)</annotation></semantics></math> … <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(x)</annotation></semantics></math>.</li>
+</ul>
+<h3 id="why-learn-seq2seq">Why learn Seq2Seq?</h3>
+<ul>
+<li>It’s a (relatively) simple model using RNNs.</li>
+<li>It’s a good case study for sequence to sequence problems like machine translation.</li>
+<li>ToneNet uses Seq2Seq!</li>
+</ul>
+<h3 id="rnns">RNNs</h3>
+<p>Essentially, a recurrent neural network takes in an input and past state. Then it emits an output and a new state. So it’s able to carry “memory” of previous inputs via the state variable.</p>
+<p>LSTMs are a sophisticated type of RNN that are designed to have better gradient backpropagation.</p>
+<h3 id="how-seq2seq-works">How Seq2Seq works</h3>
+<p>It takes in a sentence in one language, which is passed through a series of RNN cells that update a state. Then, at the end of the sentence, the state is used to generate a translation of the sentence. Its “input” is just the last word, and it continues until hitting an end-of-sentence.</p>
+<p>For some reason, it worked better when translating a sentence input backwards.</p>
+<h3 id="attention">Attention</h3>
+<p>Yea I don’t know much about attention.</p>
+<h2 id="seq2seq-tutorial"><a href="https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html">Seq2Seq tutorial</a></h2>
+<p>This is just to get started with Pytorch. It should be able to train and run on your local computer.</p>
+<h2 id="tonenet"><a href="https://towardsdatascience.com/tonenet-a-musical-style-transfer-c0a18903c910">ToneNet</a></h2>
+<p>This is a bit more involved. We won’t try their GAN based approaches and will just focus on seq2seq for now. However, there are a lot of different components to their seq2seq network:</p>
+<ul>
+<li>Converting MIDIs to tensors</li>
+<li>Converting tensors to MIDIs</li>
+<li>Seq2Seq network</li>
+<li><a href="https://lilianweng.github.io/lil-log/2018/06/24/attention-attention.html">Adding Luong attention</a></li>
+</ul>
+<h2 id="universal-music-translation-network">Universal Music Translation Network</h2>
+<h3 id="wavenet-basics">WaveNet Basics</h3>
+<ul>
+<li>Model audio as a time series</li>
+<li>Predict the probability distribution of the next point using the previous points and a conditioning signal</li>
+<li>Uses stacked convolutions to incorporate information from recent and much earlier points</li>
+<li>NVIDIA has created some <a href="https://github.com/NVIDIA/nv-wavenet">GPU optimized code</a> for WaveNet related things.</li>
+</ul>
+<p><img src="https://lh3.googleusercontent.com/Zy5xK_i2F8sNH5tFtRa0SjbLp_CU7QwzS2iB5nf2ijIf_OYm-Q5D0SgoW9SmfbDF97tNEF7CmxaL-o6oLC8sGIrJ5HxWNk79dL1r7Rc=w2048" class="invert" /></p>
+<p>Learn more about WaveNet:</p>
+<ul>
+<li>DeepMind <a href="https://deepmind.com/blog/article/wavenet-generative-model-raw-audio">blog post</a></li>
+<li><a href="https://arxiv.org/pdf/1609.03499.pdf">Paper</a></li>
+</ul>
+<h3 id="umtn-overview">UMTN Overview</h3>
+<p><img src="https://github.com/facebookresearch/music-translation/blob/master/img/fig.png?raw=true" class="invert" /></p>
+<ul>
+<li>Inputs are audio files (e.g. WAV) which can be considered a <a href="https://en.wikipedia.org/wiki/Pulse-code_modulation">time series</a></li>
+<li>Encoder network encodes inputs into a representation that, theoretically, doesn’t include any instrumentation details (“domain specific information”)</li>
+<li>A decoder can convert the encoder output into an audio file with a specific instrumentation. Each instrumentation (“domain”) has its own decoder.</li>
+<li>The whole network is really computationally expensive!</li>
+</ul>
+<h3 id="data-augmentation">Data Augmentation</h3>
+<ul>
+<li>Detune the audio beforehand, to prevent overfitting.</li>
+</ul>
+<h3 id="losses">Losses</h3>
+<ul>
+<li>Train a classifier to predict the domain from the encoded representation.</li>
+<li>Remember, the encoder is supposed to remove domain specific information!</li>
+<li>So, the loss for the encoder and decoders includes a reward (negative loss) for confusing the classifier!</li>
+<li>The other component of the encoder/decoder loss is that inputting a file and decoding it to the same domain should yield the same file.</li>
+<li>At runtime the decoder is conditioned on its previous output. But to help it learn at training time, it’s conditioned on the previous ground truth output instead. This is called <a href="https://towardsdatascience.com/what-is-teacher-forcing-3da6217fed1c">teacher forcing</a>.</li>
+</ul>
+</body>
+</html>

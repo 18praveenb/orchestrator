@@ -18,9 +18,10 @@
 </head>
 <body><span class="toc">
 <a href="./2020-02-17 Meeting 1.html" class="toc_entry">2020-02-17 Meeting 1</a><br />
+<a href="./2020-02-29 Meeting 2.html" class="toc_entry">2020-02-29 Meeting 2</a><br />
 <a href="./csua.html" class="toc_entry">csua</a><br />
 <a href="./index.html" class="toc_entry">index</a><br />
-</span><hr>
+</span>
 <h1 id="setting-up-ssh-with-github">Setting up SSH with GitHub</h1>
 <p><a href="https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh">Wonderful tutorial from Github itself</a></p>
 <p><strong>Do this first!</strong> If you have an ssh key that’s in <code>ssh-agent</code> you are less likely to get a password prompt when ssh’ing into CSUA. It’s also necessary if you want to push to Github from CSUA.</p>
@@ -81,8 +82,6 @@
 <h1 id="tensorflow-pytorch-and-virtualenv-quickstart">Tensorflow, Pytorch, and virtualenv quickstart</h1>
 <p>Create a virtualenv with <code>python3 -m venv [name-of-env]</code>. When you’re in the virtualenv your terminal will have a <code>(name-of-env)</code> before the prompt.</p>
 <p>You can exit the environment with <code>deactivate</code>, and enter it with <code>source [name-of-env]/bin/activate</code>.</p>
-<p>Install Pytorch and Tensorflow via pip.</p>
-<p>Then run the following notebook to make sure GPU access is working:</p>
-<p>(coming soon!)</p>
+<p>Install Pytorch with pip, then run this <a href="resources/csua/test_gpu.ipynb">notebook</a> to make sure GPU access is working. (You can download it to CSUA using <code>wget</code> or <code>curl</code>).</p>
 </body>
 </html>

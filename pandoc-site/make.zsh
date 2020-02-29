@@ -12,7 +12,7 @@ for infile in sources/[^_]*.md; do
     outfile=${file}.html
     echo "<a href=\"./${outfile}\" class=\"toc_entry\">${file}</a><br />" >> temp/links.temp
 done
-echo "</span><hr>" >> temp/links.temp
+echo "</span>" >> temp/links.temp
 
 cat t0.html temp/links.temp t1.html > temp/template.temp
 
