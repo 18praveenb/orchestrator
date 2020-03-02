@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>seq2seq</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="resources/styles.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body><span class="toc">
+<a href="./2020-02-17 Meeting 1.html" class="toc_entry">2020-02-17 Meeting 1</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./2020-02-29 Meeting 2.html" class="toc_entry">2020-02-29 Meeting 2</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./csua.html" class="toc_entry">csua</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./index.html" class="toc_entry">index</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./pytorch.html" class="toc_entry">pytorch</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./seq2seq.html" class="toc_entry">seq2seq</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./umtn.html" class="toc_entry">umtn</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./website.html" class="toc_entry">website</a>&nbsp;&nbsp;&nbsp;&nbsp;
+</span>
+<h1 id="week-2-meeting-resources">Week 2 Meeting Resources</h1>
+<p>First, read an <a href="https://medium.com/@devnag/seq2seq-the-clown-car-of-deep-learning-f88e1204dac3">overview</a> of seq2seq if you haven’t already.</p>
+<h2 id="notes-on-seq2seq">Notes on Seq2Seq</h2>
+<ul>
+<li><a href="https://arxiv.org/pdf/1409.3215.pdf">Link to original paper</a> (optional)</li>
+</ul>
+<h3 id="autoregressive-models"><a href="https://www.investopedia.com/terms/a/autoregressive.asp">Autoregressive models</a></h3>
+<ul>
+<li>For time series data <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(x)</annotation></semantics></math>, predicting <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(x + 1)</annotation></semantics></math> using <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(1)</annotation></semantics></math> … <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(x)</annotation></semantics></math>.</li>
+</ul>
+<h3 id="why-learn-seq2seq">Why learn Seq2Seq?</h3>
+<ul>
+<li>It’s a (relatively) simple model using RNNs.</li>
+<li>It’s a good case study for sequence to sequence problems like machine translation.</li>
+<li>ToneNet uses Seq2Seq!</li>
+</ul>
+<h3 id="rnns">RNNs</h3>
+<p>Essentially, a recurrent neural network takes in an input and past state. Then it emits an output and a new state. So it’s able to carry “memory” of previous inputs via the state variable.</p>
+<p>LSTMs are a sophisticated type of RNN that are designed to have better gradient backpropagation.</p>
+<p>GRUs are a weird variant of LSMs where the output and hidden state are the same. They should not work well, but for some reason they do.</p>
+<h3 id="how-seq2seq-works">How Seq2Seq works</h3>
+<p>It takes in a sentence in one language, which is passed through a series of RNN cells that update a state. Then, at the end of the sentence, the state is used to generate a translation of the sentence. Its “input” is just the last word, and it continues until hitting an end-of-sentence.</p>
+<p>For some reason, it worked better when translating a sentence input backwards.</p>
+<h3 id="attention">Attention</h3>
+<p>Attention is calculated over the input, then pointwise multiplied with the input. It allows the network to weight some features more heavily than others.</p>
+<h2 id="seq2seq-tutorial"><a href="https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html">Seq2Seq tutorial</a></h2>
+<p>This is just to get started with Pytorch. Recommend using Google Colab.</p>
+<p>Make sure to read over the code and understand what it’s doing. Some of the coding standards used aren’t ideal. For instance, at one point <code>torch.bmm</code> is used, where <code>torch.matmul</code> is the most general way of multiplying tensors (works with vectors, 2d and batched 3d tensors etc.).</p>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>website</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="resources/styles.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body><span class="toc">
+<a href="./2020-02-17 Meeting 1.html" class="toc_entry">2020-02-17 Meeting 1</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./2020-02-29 Meeting 2.html" class="toc_entry">2020-02-29 Meeting 2</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./csua.html" class="toc_entry">csua</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./index.html" class="toc_entry">index</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./pytorch.html" class="toc_entry">pytorch</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./seq2seq.html" class="toc_entry">seq2seq</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./umtn.html" class="toc_entry">umtn</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./website.html" class="toc_entry">website</a>&nbsp;&nbsp;&nbsp;&nbsp;
+</span>
+<h1 id="website-structure">Website structure</h1>
+<p>The Github repository has several folders:</p>
+<ul>
+<li><code>docs</code> is where the website output is. Don’t edit these files – they are overwritten whenever the website is built. However, you will need to commit them to Github in order for website changes to show up.</li>
+<li><code>make-size.zsh</code> builds the website.</li>
+<li><code>pandoc-site</code> contains the actual website source.
+<ul>
+<li><code>make.zsh</code> contains the build logic for the website.</li>
+<li><code>temp</code> contains files that are overwritten on each build – don’t edit/commit these.</li>
+<li><code>t0.html</code> and <code>t1.html</code> are Pandoc’s default template split in two so that the link bar can be added to the website.</li>
+<li><code>sources</code> is where new pages can be added.</li>
+</ul></li>
+</ul>
+<p>To create a new page, create a file <code>page_name.md</code> in <code>pandoc-site/sources</code>.</p>
+<p>It’s <a href="https://pandoc.org/MANUAL.html#pandocs-markdown">Markdown</a> which is also used in <a href="https://guides.github.com/features/mastering-markdown/">GitHub readmes</a> and <a href="https://jupyter-notebook.readthedocs.io/en/stable/examples/Notebook/Working%20With%20Markdown%20Cells.html">Jupyter notebook text cells</a>.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>Add math with <code>$</code> (e.g. <code>$x^3$</code> becomes <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>x</mi><mn>3</mn></msup><annotation encoding="application/x-tex">x^3</annotation></semantics></math>) and headings with #. You can also add inline HTML.</p>
+<p>Add images with <code>[caption](image-url){.invert}</code>. The caption is optional. The <code>invert</code> is also optional; it makes the image colors flip when the website is in dark mode.</p>
+<p>To add local images or Juypter notebooks for download, add them to <code>resources</code> then reference then with a link to <code>./resources/file-name.extension</code>.</p>
+<p>To link to other pages, use <code>[link-name](page-name.html)</code>. Note that even though pages are <code>.md</code> files, in the website they will be <code>.html</code>, so that’s what should be used in the link.</p>
+<p>If a page is named with a leading underscore (e.g. <code>_mypage.md</code>), then it won’t show up in the navigation bar, but the output file will be just <code>mypage.html</code>. This can be useful for creating subpages that are only accessible from another page. Note that the link would still be <code>./mypage.html</code>.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Although they all have slightly different syntax for advanced features<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</body>
+</html>

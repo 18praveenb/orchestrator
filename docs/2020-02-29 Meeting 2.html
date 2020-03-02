@@ -17,95 +17,77 @@
   <![endif]-->
 </head>
 <body><span class="toc">
-<a href="./2020-02-17 Meeting 1.html" class="toc_entry">2020-02-17 Meeting 1</a><br />
-<a href="./2020-02-29 Meeting 2.html" class="toc_entry">2020-02-29 Meeting 2</a><br />
-<a href="./csua.html" class="toc_entry">csua</a><br />
-<a href="./index.html" class="toc_entry">index</a><br />
+<a href="./2020-02-17 Meeting 1.html" class="toc_entry">2020-02-17 Meeting 1</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./2020-02-29 Meeting 2.html" class="toc_entry">2020-02-29 Meeting 2</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./csua.html" class="toc_entry">csua</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./index.html" class="toc_entry">index</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./pytorch.html" class="toc_entry">pytorch</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./seq2seq.html" class="toc_entry">seq2seq</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./umtn.html" class="toc_entry">umtn</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./website.html" class="toc_entry">website</a>&nbsp;&nbsp;&nbsp;&nbsp;
 </span>
 <h1 id="week-2-meeting-229">Week 2 Meeting 2/29</h1>
-<h2 id="agenda">Agenda</h2>
-<table>
-<tbody>
-<tr class="odd">
-<td>10:10 - 10:30</td>
-<td>Discuss Seq2Seq</td>
-</tr>
-<tr class="even">
-<td>10:30 - 11:30</td>
-<td>Seq2Seq tutorial</td>
-</tr>
-<tr class="odd">
-<td>11:30 - 12:30</td>
-<td>ToneNet</td>
-</tr>
-<tr class="even">
-<td>12:30 - 1:00</td>
-<td>Discuss UMTN paper</td>
-</tr>
-</tbody>
-</table>
-<h2 id="seq2seq-overview"><a href="https://arxiv.org/pdf/1409.3215.pdf">Seq2Seq</a> Overview</h2>
-<h3 id="autoregressive-models"><a href="https://www.investopedia.com/terms/a/autoregressive.asp">Autoregressive models</a></h3>
+<h2 id="attendance">Attendance</h2>
 <ul>
-<li>For time series data <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(x)</annotation></semantics></math>, predicting <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(x + 1)</annotation></semantics></math> using <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(1)</annotation></semantics></math> … <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f(x)</annotation></semantics></math>.</li>
+<li>Present: Alicia, Andrew, James, Praveen</li>
+<li>Excused absence: Jasmine</li>
+<li>Unexcused absence: Jim</li>
 </ul>
-<h3 id="why-learn-seq2seq">Why learn Seq2Seq?</h3>
+<h2 id="recap">Recap</h2>
 <ul>
-<li>It’s a (relatively) simple model using RNNs.</li>
-<li>It’s a good case study for sequence to sequence problems like machine translation.</li>
-<li>ToneNet uses Seq2Seq!</li>
+<li>Discussed Seq2Seq</li>
+<li>Finished <a href="https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html">Pytorch Seq2Seq tutorial</a> in Colab</li>
+<li>Discussed <a href="./umtn.html">Universal Music Translation Network</a></li>
+<li>Discussed how to edit the website</li>
+<li>Decided on teams</li>
 </ul>
-<h3 id="rnns">RNNs</h3>
-<p>Essentially, a recurrent neural network takes in an input and past state. Then it emits an output and a new state. So it’s able to carry “memory” of previous inputs via the state variable.</p>
-<p>LSTMs are a sophisticated type of RNN that are designed to have better gradient backpropagation.</p>
-<h3 id="how-seq2seq-works">How Seq2Seq works</h3>
-<p>It takes in a sentence in one language, which is passed through a series of RNN cells that update a state. Then, at the end of the sentence, the state is used to generate a translation of the sentence. Its “input” is just the last word, and it continues until hitting an end-of-sentence.</p>
-<p>For some reason, it worked better when translating a sentence input backwards.</p>
-<h3 id="attention">Attention</h3>
-<p>Yea I don’t know much about attention.</p>
-<h2 id="seq2seq-tutorial"><a href="https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html">Seq2Seq tutorial</a></h2>
-<p>This is just to get started with Pytorch. It should be able to train and run on your local computer.</p>
-<h2 id="tonenet"><a href="https://towardsdatascience.com/tonenet-a-musical-style-transfer-c0a18903c910">ToneNet</a></h2>
-<p>This is a bit more involved. We won’t try their GAN based approaches and will just focus on seq2seq for now. However, there are a lot of different components to their seq2seq network:</p>
+<h2 id="teams-and-tasks">Teams and Tasks</h2>
+<p>We are lucky to have access to <a href="https://github.com/facebookresearch/music-translation">source code</a>, <a href="https://homes.cs.washington.edu/~thickstn/musicnet.html">data</a>, and <a href="https://dl.fbaipublicfiles.com/music-translation/pretrained_musicnet.zip">pretrained models</a> which the paper authors and other researchers have released.</p>
+<p>However, we also face a challenge in that the network takes a long time to train. It’s unclear at this point how much 2-gpu training time is needed to replicate the pretrained checkpoint, which used either 1152 or 3456 GPU hours (the GitHub and paper disagree on the exact number). This will also make it harder to test our re-implementation and make sure it’s working correctly.</p>
+<p>Because of this, we will try working on different tasks in parallel. We will split into 3 groups of 2, each group working on a different task. Every 2 weeks, there will be an opportunity to switch groups/tasks so that everyone can try working on different tasks throughout the semester.</p>
+<p>Team assignments for the next 2 weeks were decided at the meeting:</p>
+<ol type="1">
+<li>(James, Alicia) Understanding and re-implementing the UMTN architecture.
 <ul>
-<li>Converting MIDIs to tensors</li>
-<li>Converting tensors to MIDIs</li>
-<li>Seq2Seq network</li>
-<li><a href="https://lilianweng.github.io/lil-log/2018/06/24/attention-attention.html">Adding Luong attention</a></li>
+<li>Reading and writing a lot of Pytorch and integrating UMTN’s custom CUDA kernels with Pytorch (rather than rewriting them from scratch, which would be impractical).</li>
+<li>You can reference the original source code and use the custom CUDA kernels, but should try to rewrite the Pytorch code “from scratch” whenever possible (both for learning the network structure better and so that we can get the experience of writing and maintaining more complex Pytorch code).</li>
+</ul></li>
+<li>(Praveen, Andrew) Experiments related to training the UTMN.
+<ul>
+<li>e.g. training on new data, changing hyperparameters, adding a new loss term or even modifying the architecture</li>
+<li>You can use the original source code for experiments</li>
+</ul></li>
+<li>(Jasmine, Jim) Experiments related to evaluating the UTMN.
+<ul>
+<li>e.g. adding two latent space vectors together and seeing what the decoded result is (this was also done in the original paper – perhaps try another modification of latent vectors e.g. an affine transform?), training a neural network on the latent space or otherwise generating/modifying latent space vectors, evaluating on new data</li>
+<li>You can use the original source code and the pretrained model.</li>
+</ul></li>
+</ol>
+<h2 id="what-to-do-by-next-meeting">What to do by next meeting</h2>
+<p>If you missed the meeting:</p>
+<ul>
+<li><a href="./seq2seq.html">Seq2Seq tutorial</a></li>
+<li><a href="./umtn.html">UMTN notes</a></li>
+<li><a href="./website.html">How to edit the website</a></li>
 </ul>
-<h2 id="universal-music-translation-network">Universal Music Translation Network</h2>
-<h3 id="wavenet-basics">WaveNet Basics</h3>
+<p>Reimplementation team:</p>
 <ul>
-<li>Model audio as a time series</li>
-<li>Predict the probability distribution of the next point using the previous points and a conditioning signal</li>
-<li>Uses stacked convolutions to incorporate information from recent and much earlier points</li>
-<li>NVIDIA has created some <a href="https://github.com/NVIDIA/nv-wavenet">GPU optimized code</a> for WaveNet related things.</li>
+<li>Take a look at the <a href="https://github.com/facebookresearch/music-translation">Github</a> and <a href="https://arxiv.org/pdf/1805.07848.pdf">paper</a></li>
 </ul>
-<p><img src="https://lh3.googleusercontent.com/Zy5xK_i2F8sNH5tFtRa0SjbLp_CU7QwzS2iB5nf2ijIf_OYm-Q5D0SgoW9SmfbDF97tNEF7CmxaL-o6oLC8sGIrJ5HxWNk79dL1r7Rc=w2048" class="invert" /></p>
-<p>Learn more about WaveNet:</p>
+<p>Training experiments team:</p>
 <ul>
-<li>DeepMind <a href="https://deepmind.com/blog/article/wavenet-generative-model-raw-audio">blog post</a></li>
-<li><a href="https://arxiv.org/pdf/1609.03499.pdf">Paper</a></li>
+<li>Brainstorm ideas for experiments</li>
+<li>Run a training experiment (currently in progress)</li>
 </ul>
-<h3 id="umtn-overview">UMTN Overview</h3>
-<p><img src="https://github.com/facebookresearch/music-translation/blob/master/img/fig.png?raw=true" class="invert" /></p>
+<p>Evaluation experiments team:</p>
 <ul>
-<li>Inputs are audio files (e.g. WAV) which can be considered a <a href="https://en.wikipedia.org/wiki/Pulse-code_modulation">time series</a></li>
-<li>Encoder network encodes inputs into a representation that, theoretically, doesn’t include any instrumentation details (“domain specific information”)</li>
-<li>A decoder can convert the encoder output into an audio file with a specific instrumentation. Each instrumentation (“domain”) has its own decoder.</li>
-<li>The whole network is really computationally expensive!</li>
+<li>Brainstorm ideas for experiments</li>
+<li>Try to get <a href="https://github.com/facebookresearch/music-translation">the sample code</a> to run on CSUA using the pretrained model. When I did this there were a lot of issues to debug (like compiling the CUDA kernels for the CSUA’s GPUs). So let me know if anything breaks, as it almost certainly will.</li>
 </ul>
-<h3 id="data-augmentation">Data Augmentation</h3>
+<p>Presenter for GM:</p>
 <ul>
-<li>Detune the audio beforehand, to prevent overfitting.</li>
-</ul>
-<h3 id="losses">Losses</h3>
-<ul>
-<li>Train a classifier to predict the domain from the encoded representation.</li>
-<li>Remember, the encoder is supposed to remove domain specific information!</li>
-<li>So, the loss for the encoder and decoders includes a reward (negative loss) for confusing the classifier!</li>
-<li>The other component of the encoder/decoder loss is that inputting a file and decoding it to the same domain should yield the same file.</li>
-<li>At runtime the decoder is conditioned on its previous output. But to help it learn at training time, it’s conditioned on the previous ground truth output instead. This is called <a href="https://towardsdatascience.com/what-is-teacher-forcing-3da6217fed1c">teacher forcing</a>.</li>
+<li>Present results of this week’s meeting at GM</li>
+<li>TBD whether we can use this summary document or will need to create a Google slide.</li>
 </ul>
 </body>
 </html>
