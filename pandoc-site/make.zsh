@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+setopt null_glob
 
 echo "Removing old files..."
 rm -v ../docs/*.html
