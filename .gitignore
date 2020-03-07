@@ -4,4 +4,4 @@
 *.pyx
 *.temp
 temp/*
-music-translation/musicnet
+*.pth
