@@ -80,7 +80,7 @@ class BuildExtensionWithHalf(build_ext, object):
                 # NVCC does not allow multiple -std to be passed, so we avoid
                 # overriding the option if the user explicitly passed it.
                 if not any(flag.startswith('-std=') for flag in cflags):
-                    cflags.append('-std=c++11')
+                    cflags.append('-std=c++14')
 
                 original_compile(obj, src, ext, cc_args, cflags, pp_opts)
             finally:
@@ -219,8 +219,8 @@ setup(
                           "matrix.cpp",
                       ],
                       extra_compile_args={
-                          "cxx": ["-std=c++14"],
-                          "nvcc": ["-arch=sm_70", "-std=c++14", "--use_fast_math",
+                          "cxx": ["-std=c++11"],
+                          "nvcc": ["-arch=sm_60", "-std=c++14", "--use_fast_math",
                                    "-maxrregcount", "128", "--ptxas-options=-v",
                                    "--expt-relaxed-constexpr", "-D__GNUC__=6"]
                       }
