@@ -5,3 +5,4 @@
 *.temp
 temp/*
 *.pth
+music-translation/musicnet
