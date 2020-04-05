@@ -6,3 +6,5 @@
 temp/*
 *.pth
 music-translation/musicnet
+music-translation/notebooks/.ipynb_checkpoints
+
