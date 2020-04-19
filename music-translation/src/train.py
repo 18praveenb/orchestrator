@@ -138,8 +138,12 @@ class Trainer:
         self.eval_total = LossMeter('eval total')
 
         self.encoder = Encoder(args)
-        self.decoder = WaveNet(args)
         self.discriminator = ZDiscriminator(args)
+
+        if args.distributed:
+            self.decoder = WaveNet(args)
+        else:
+            self.decoders = [WaveNet(args) for _ in range(self.args.n_datasets)]
 
         if args.checkpoint:
             checkpoint_args_path = os.path.dirname(args.checkpoint) + '/args.pth'
@@ -149,32 +153,43 @@ class Trainer:
             states = torch.load(args.checkpoint)
 
             self.encoder.load_state_dict(states['encoder_state'])
-            self.decoder.load_state_dict(states['decoder_state'])
+            if args.distributed:
+                self.decoder.load_state_dict(states['decoder_state'])
             self.discriminator.load_state_dict(states['discriminator_state'])
 
             self.logger.info('Loaded checkpoint parameters')
         else:
             self.start_epoch = 0
 
+        ## BUGFIX Data loading ##
         if args.distributed:
             self.encoder.cuda()
             self.encoder = torch.nn.parallel.DistributedDataParallel(self.encoder)
             self.discriminator.cuda()
             self.discriminator = torch.nn.parallel.DistributedDataParallel(self.discriminator)
+            self.decoder = torch.nn.DataParallel(self.decoder).cuda()
             self.logger.info('Created DistributedDataParallel')
+            self.model_optimizer = optim.Adam(chain(self.encoder.parameters(),
+                                                    self.decoder.parameters()),
+                                              lr=args.lr)
         else:
             self.encoder = torch.nn.DataParallel(self.encoder).cuda()
             self.discriminator = torch.nn.DataParallel(self.discriminator).cuda()
-        self.decoder = torch.nn.DataParallel(self.decoder).cuda()
-
-        self.model_optimizer = optim.Adam(chain(self.encoder.parameters(),
-                                                self.decoder.parameters()),
-                                          lr=args.lr)
+            ## BUGFIX -- IMPLEMENTED Separate optim / decoder ##
+            self.model_optimizers = []
+            for decoder in self.decoders:
+                decoder = torch.nn.DataParallel(decoder).cuda()
+            self.model_optimizers = [optim.Adam(chain(self.encoder.parameters(),
+                                                      decoder.parameters()),
+                                                lr=args.lr)
+                                     for decoder in self.decoders]
+        
         self.d_optimizer = optim.Adam(self.discriminator.parameters(),
                                       lr=args.lr)
 
+        ## BUGFIX Data loading ##
         if args.checkpoint and args.load_optimizer:
-            self.model_optimizer.load_state_dict(states['model_optimizer_state'])
+                self.model_optimizer.load_state_dict(states['model_optimizer_state'])
             self.d_optimizer.load_state_dict(states['d_optimizer_state'])
 
         self.lr_manager = torch.optim.lr_scheduler.ExponentialLR(self.model_optimizer, args.lr_decay)
@@ -185,6 +200,7 @@ class Trainer:
         x, x_aug = x.float(), x_aug.float()
 
         z = self.encoder(x)
+        ## BUGFIX decoder ##
         y = self.decoder(x, z)
         z_logits = self.discriminator(z)
 
@@ -242,6 +258,7 @@ class Trainer:
         if self.args.grad_clip is not None:
             clip_grad_value_(self.encoder.parameters(), self.args.grad_clip)
             clip_grad_value_(self.decoder.parameters(), self.args.grad_clip)
+        ## BUGFIX model optimizer ##
         self.model_optimizer.step()
 
         self.loss_total.add(loss.data.item())
@@ -358,6 +375,7 @@ class Trainer:
             self.logger.debug('Ended epoch')
 
     def save_model(self, filename):
+        ## BUGFIX save model ##
         save_path = self.expPath / filename
 
         torch.save({'encoder_state': self.encoder.module.state_dict(),
@@ -404,3 +422,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
