@@ -376,18 +376,30 @@ class Trainer:
 
     def save_model(self, filename):
         ## BUGFIX save model ##
-        save_path = self.expPath / filename
-
-        torch.save({'encoder_state': self.encoder.module.state_dict(),
-                    'decoder_state': self.decoder.module.state_dict(),
-                    'discriminator_state': self.discriminator.module.state_dict(),
-                    'model_optimizer_state': self.model_optimizer.state_dict(),
-                    'dataset': self.args.rank,
-                    'd_optimizer_state': self.d_optimizer.state_dict()
-                    },
-                   save_path)
-
-        self.logger.debug(f'Saved model to {save_path}')
+        if self.args.distributed:
+            save_path = self.expPath / filename
+            torch.save({'encoder_state': self.encoder.module.state_dict(),
+                        'decoder_state': self.decoder.module.state_dict(),
+                        'discriminator_state': self.discriminator.module.state_dict(),
+                        'model_optimizer_state': self.model_optimizer.state_dict(),
+                        'dataset': self.args.rank,
+                        'd_optimizer_state': self.d_optimizer.state_dict()
+                        },
+                    save_path)
+            self.logger.debug(f'Saved model to {save_path}')
+        else:
+            filename = re.sub('_\d.pth$', '', filename)
+            for i in range(self.args.n_datasets):
+                save_path = self.expPath / f'{filename}_{i}.pth'
+                torch.save({'encoder_state': self.encoder.module.state_dict(),
+                            'decoder_state': self.decoders[i].module.state_dict(),
+                            'discriminator_state': self.discriminator.module.state_dict(),
+                            'model_optimizer_state': self.model_optimizers[i].state_dict(),
+                            'dataset': self.args.rank,
+                            'd_optimizer_state': self.d_optimizer.state_dict()
+                            },
+                        save_path)
+                self.logger.debug(f'Saved model to {save_path}')
 
 
 def main():
