@@ -19,6 +19,7 @@ from itertools import chain
 import numpy as np
 from pathlib import Path
 from tqdm import tqdm
+import re
 
 from data import DatasetSet
 from wavenet import WaveNet
@@ -143,19 +144,27 @@ class Trainer:
         if args.distributed:
             self.decoder = WaveNet(args)
         else:
-            self.decoders = [WaveNet(args) for _ in range(self.args.n_datasets)]
+            self.decoders = torch.nn.ModuleList([WaveNet(args) for _ in range(self.args.n_datasets)])
 
         if args.checkpoint:
             checkpoint_args_path = os.path.dirname(args.checkpoint) + '/args.pth'
             checkpoint_args = torch.load(checkpoint_args_path)
 
             self.start_epoch = checkpoint_args[-1] + 1
-            states = torch.load(args.checkpoint)
-
-            self.encoder.load_state_dict(states['encoder_state'])
             if args.distributed:
+                states = torch.load(args.checkpoint)
+            else:
+                states = [torch.load(args.checkpoint + f'_{i}.pth')
+                          for i in range(self.args.n_datasets)]
+            if args.distributed:
+                self.encoder.load_state_dict(states['encoder_state'])
                 self.decoder.load_state_dict(states['decoder_state'])
-            self.discriminator.load_state_dict(states['discriminator_state'])
+                self.discriminator.load_state_dict(states['discriminator_state'])
+            else:
+                self.encoder.load_state_dict(states[0]['encoder_state'])
+                for i in range(self.args.n_datasets):
+                    self.decoders[i].load_state_dict(states[i]['decoder_state'])
+                self.discriminator.load_state_dict(states[0]['discriminator_state'])
 
             self.logger.info('Loaded checkpoint parameters')
         else:
@@ -177,8 +186,8 @@ class Trainer:
             self.discriminator = torch.nn.DataParallel(self.discriminator).cuda()
             ## BUGFIX -- IMPLEMENTED Separate optim / decoder ##
             self.model_optimizers = []
-            for decoder in self.decoders:
-                decoder = torch.nn.DataParallel(decoder).cuda()
+            for i, decoder in enumerate(self.decoders):
+                self.decoders[i] = torch.nn.DataParallel(decoder).cuda()
             self.model_optimizers = [optim.Adam(chain(self.encoder.parameters(),
                                                       decoder.parameters()),
                                                 lr=args.lr)
@@ -189,19 +198,34 @@ class Trainer:
 
         ## BUGFIX Data loading ##
         if args.checkpoint and args.load_optimizer:
+            if args.distributed:
                 self.model_optimizer.load_state_dict(states['model_optimizer_state'])
-            self.d_optimizer.load_state_dict(states['d_optimizer_state'])
+                self.d_optimizer.load_state_dict(states['d_optimizer_state'])
+            else:
+                for i in range(self.args.n_datasets):
+                    self.model_optimizers[i].load_state_dict(states[i]['model_optimizer_state'])
+                self.d_optimizer.load_state_dict(states[0]['d_optimizer_state'])
 
-        self.lr_manager = torch.optim.lr_scheduler.ExponentialLR(self.model_optimizer, args.lr_decay)
-        self.lr_manager.last_epoch = self.start_epoch
-        self.lr_manager.step()
+        if args.distributed:
+            self.lr_manager = torch.optim.lr_scheduler.ExponentialLR(self.model_optimizer, args.lr_decay)
+            self.lr_manager.last_epoch = self.start_epoch
+            self.lr_manager.step()
+        else:
+            self.lr_managers = []
+            for i in range(self.args.n_datasets):
+                self.lr_managers.append(torch.optim.lr_scheduler.ExponentialLR(self.model_optimizers[i], args.lr_decay))
+                self.lr_managers[i].last_epoch = self.start_epoch
+                self.lr_managers[i].step()
 
     def eval_batch(self, x, x_aug, dset_num):
         x, x_aug = x.float(), x_aug.float()
 
         z = self.encoder(x)
         ## BUGFIX decoder ##
-        y = self.decoder(x, z)
+        if self.args.distributed:
+            y = self.decoder(x, z)
+        else:
+            y = self.decoders[dset_num](x, z)
         z_logits = self.discriminator(z)
 
         z_classification = torch.max(z_logits, dim=1)[1]
@@ -240,7 +264,10 @@ class Trainer:
 
         # optimize G - reconstructs well, discriminator wrong
         z = self.encoder(x_aug)
-        y = self.decoder(x, z)
+        if self.args.distributed:
+            y = self.decoder(x, z)
+        else:
+            y = self.decoders[dset_num](x, z)
         z_logits = self.discriminator(z)
         discriminator_wrong = - F.cross_entropy(z_logits, torch.tensor([dset_num] * x.size(0)).long().cuda()).mean()
 
@@ -253,13 +280,23 @@ class Trainer:
 
         loss = (recon_loss.mean() + self.args.d_lambda * discriminator_wrong)
 
-        self.model_optimizer.zero_grad()
+        if self.args.distributed:
+            self.model_optimizer.zero_grad()
+        else:
+            self.model_optimizers[dset_num].zero_grad()
         loss.backward()
         if self.args.grad_clip is not None:
             clip_grad_value_(self.encoder.parameters(), self.args.grad_clip)
-            clip_grad_value_(self.decoder.parameters(), self.args.grad_clip)
+            if self.args.distributed:
+                clip_grad_value_(self.decoder.parameters(), self.args.grad_clip)
+            else:
+                for decoder in self.decoders:
+                    clip_grad_value_(decoder.parameters(), self.args.grad_clip)
         ## BUGFIX model optimizer ##
-        self.model_optimizer.step()
+        if self.args.distributed:
+            self.model_optimizer.step()
+        else:
+            self.model_optimizers[dset_num].step()
 
         self.loss_total.add(loss.data.item())
 
@@ -272,7 +309,11 @@ class Trainer:
         self.loss_total.reset()
 
         self.encoder.train()
-        self.decoder.train()
+        if self.args.distributed:
+            self.decoder.train()
+        else:
+            for decoder in self.decoders:
+                decoder.train()
         self.discriminator.train()
 
         n_batches = self.args.epoch_len
@@ -305,7 +346,11 @@ class Trainer:
         self.eval_total.reset()
 
         self.encoder.eval()
-        self.decoder.eval()
+        if self.args.distributed:
+            self.decoder.eval()
+        else:
+            for decoder in self.decoders:
+                decoder.eval()
         self.discriminator.eval()
 
         n_batches = int(np.ceil(self.args.epoch_len / 10))
@@ -355,7 +400,11 @@ class Trainer:
 
             self.logger.info(f'Epoch %s Rank {self.args.rank} - Train loss: (%s), Test loss (%s)',
                              epoch, self.train_losses(), self.eval_losses())
-            self.lr_manager.step()
+            if self.args.distributed:
+                self.lr_manager.step()
+            else:
+                for i in range(self.args.n_datasets):
+                    self.lr_managers[i].step()
             val_loss = self.eval_total.summarize_epoch()
 
             if val_loss < best_eval:
