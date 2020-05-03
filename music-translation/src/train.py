@@ -186,8 +186,8 @@ class Trainer:
             self.discriminator = torch.nn.DataParallel(self.discriminator).cuda()
             ## BUGFIX -- IMPLEMENTED Separate optim / decoder ##
             self.model_optimizers = []
-            for decoder in self.decoders:
-                decoder = torch.nn.DataParallel(decoder).cuda()
+            for i, decoder in enumerate(self.decoders):
+                self.decoders[i] = torch.nn.DataParallel(decoder).cuda()
             self.model_optimizers = [optim.Adam(chain(self.encoder.parameters(),
                                                       decoder.parameters()),
                                                 lr=args.lr)
@@ -425,7 +425,6 @@ class Trainer:
 
     def save_model(self, filename):
         ## BUGFIX save model ##
-        print(self.encoder.module)
         if self.args.distributed:
             save_path = self.expPath / filename
             torch.save({'encoder_state': self.encoder.module.state_dict(),
