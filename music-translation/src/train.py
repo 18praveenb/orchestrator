@@ -211,7 +211,7 @@ class Trainer:
             for i in range(self.args.n_datasets):
                 self.lr_managers.append(torch.optim.lr_scheduler.ExponentialLR(self.model_optimizers[i], args.lr_decay))
                 self.lr_managers[i].last_epoch = self.start_epoch
-                self.lr_manager[i].step()
+                self.lr_managers[i].step()
 
     def eval_batch(self, x, x_aug, dset_num):
         x, x_aug = x.float(), x_aug.float()
