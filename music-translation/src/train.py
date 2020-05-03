@@ -218,7 +218,7 @@ class Trainer:
 
         z = self.encoder(x)
         ## BUGFIX decoder ##
-        if args.distributed:
+        if self.args.distributed:
             y = self.decoder(x, z)
         else:
             y = self.decoders[dset_num](x, z)
@@ -260,7 +260,10 @@ class Trainer:
 
         # optimize G - reconstructs well, discriminator wrong
         z = self.encoder(x_aug)
-        y = self.decoder(x, z)
+        if self.args.distributed:
+            y = self.decoder(x, z)
+        else:
+            y = self.decoders[dset_num](x, z)
         z_logits = self.discriminator(z)
         discriminator_wrong = - F.cross_entropy(z_logits, torch.tensor([dset_num] * x.size(0)).long().cuda()).mean()
 
