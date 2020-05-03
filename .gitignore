@@ -9,3 +9,4 @@ temp/*
 music-translation/musicnet
 *.pt
 *.wav
+seq2seq/pytorch tutorial/
