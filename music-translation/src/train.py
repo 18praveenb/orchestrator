@@ -342,7 +342,11 @@ class Trainer:
         self.eval_total.reset()
 
         self.encoder.eval()
-        self.decoder.eval()
+        if self.args.distributed:
+            self.decoder.eval()
+        else:
+            for decoder in self.decoders:
+                decoder.eval()
         self.discriminator.eval()
 
         n_batches = int(np.ceil(self.args.epoch_len / 10))
