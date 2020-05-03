@@ -209,7 +209,7 @@ class Trainer:
         else:
             self.lr_managers = []
             for i in range(self.args.n_datasets):
-                self.lr_managers.append(torch.optim.lr_scheduler.ExponentialLR(self.model_optimizer, args.lr_decay))
+                self.lr_managers.append(torch.optim.lr_scheduler.ExponentialLR(self.model_optimizers[i], args.lr_decay))
                 self.lr_managers[i].last_epoch = self.start_epoch
                 self.lr_manager[i].step()
 
