@@ -283,7 +283,11 @@ class Trainer:
         loss.backward()
         if self.args.grad_clip is not None:
             clip_grad_value_(self.encoder.parameters(), self.args.grad_clip)
-            clip_grad_value_(self.decoder.parameters(), self.args.grad_clip)
+            if args.distributed:
+                clip_grad_value_(self.decoder.parameters(), self.args.grad_clip)
+            else:
+                for decoder in self.decoders:
+                    clip_grad_value_(decoder.parameters(), self.args.grad_clip)
         ## BUGFIX model optimizer ##
         if self.args.distributed:
             self.model_optimizer.step()
