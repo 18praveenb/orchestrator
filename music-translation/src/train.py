@@ -19,6 +19,7 @@ from itertools import chain
 import numpy as np
 from pathlib import Path
 from tqdm import tqdm
+import re
 
 from data import DatasetSet
 from wavenet import WaveNet
@@ -150,7 +151,11 @@ class Trainer:
             checkpoint_args = torch.load(checkpoint_args_path)
 
             self.start_epoch = checkpoint_args[-1] + 1
-            states = torch.load(args.checkpoint)
+            if self.distributed:
+                states = torch.load(args.checkpoint)
+            else:
+                states = [torch.load(args.checkpoint + f'_{i}.pth')
+                          for i in range(self.args.n_datasets)]
 
             self.encoder.load_state_dict(states['encoder_state'])
             if args.distributed:
@@ -189,8 +194,13 @@ class Trainer:
 
         ## BUGFIX Data loading ##
         if args.checkpoint and args.load_optimizer:
+            if args.distributed:
                 self.model_optimizer.load_state_dict(states['model_optimizer_state'])
-            self.d_optimizer.load_state_dict(states['d_optimizer_state'])
+                self.d_optimizer.load_state_dict(states['d_optimizer_state'])
+            else:
+                for i in range(self.args.n_datasets):
+                    self.model_optimizers[i].load_state_dict(states[i]['model_optimizer_state'])
+                self.d_optimizer.load_state_dict(states[0]['d_optimizer_state'])
 
         self.lr_manager = torch.optim.lr_scheduler.ExponentialLR(self.model_optimizer, args.lr_decay)
         self.lr_manager.last_epoch = self.start_epoch
@@ -201,7 +211,10 @@ class Trainer:
 
         z = self.encoder(x)
         ## BUGFIX decoder ##
-        y = self.decoder(x, z)
+        if args.distributed:
+            y = self.decoder(x, z)
+        else:
+            y = self.decoders[dset_num](x, z)
         z_logits = self.discriminator(z)
 
         z_classification = torch.max(z_logits, dim=1)[1]
@@ -253,13 +266,19 @@ class Trainer:
 
         loss = (recon_loss.mean() + self.args.d_lambda * discriminator_wrong)
 
-        self.model_optimizer.zero_grad()
+        if args.distributed:
+            self.model_optimizer.zero_grad()
+        else:
+            self.model_optimizers[dset_num].zero_grad()
         loss.backward()
         if self.args.grad_clip is not None:
             clip_grad_value_(self.encoder.parameters(), self.args.grad_clip)
             clip_grad_value_(self.decoder.parameters(), self.args.grad_clip)
         ## BUGFIX model optimizer ##
-        self.model_optimizer.step()
+        if args.distributed:
+            self.model_optimizer.step()
+        else:
+            self.model_optimizers[dset_num].step()
 
         self.loss_total.add(loss.data.item())
 
@@ -272,7 +291,11 @@ class Trainer:
         self.loss_total.reset()
 
         self.encoder.train()
-        self.decoder.train()
+        if self.args.distributed:
+            self.decoder.train()
+        else:
+            for decoder in self.decoders:
+                decoder.train()
         self.discriminator.train()
 
         n_batches = self.args.epoch_len
@@ -376,18 +399,30 @@ class Trainer:
 
     def save_model(self, filename):
         ## BUGFIX save model ##
-        save_path = self.expPath / filename
-
-        torch.save({'encoder_state': self.encoder.module.state_dict(),
-                    'decoder_state': self.decoder.module.state_dict(),
-                    'discriminator_state': self.discriminator.module.state_dict(),
-                    'model_optimizer_state': self.model_optimizer.state_dict(),
-                    'dataset': self.args.rank,
-                    'd_optimizer_state': self.d_optimizer.state_dict()
-                    },
-                   save_path)
-
-        self.logger.debug(f'Saved model to {save_path}')
+        if args.distributed:
+            save_path = self.expPath / filename
+            torch.save({'encoder_state': self.encoder.module.state_dict(),
+                        'decoder_state': self.decoder.module.state_dict(),
+                        'discriminator_state': self.discriminator.module.state_dict(),
+                        'model_optimizer_state': self.model_optimizer.state_dict(),
+                        'dataset': self.args.rank,
+                        'd_optimizer_state': self.d_optimizer.state_dict()
+                        },
+                    save_path)
+            self.logger.debug(f'Saved model to {save_path}')
+        else:
+            filename = re.sub('.pth$', '', filename)
+            for i in range(self.args.n_datasets):
+                save_path = self.expPath / f'{filename}_{i}.pth'
+                torch.save({'encoder_state': self.encoder.module.state_dict(),
+                            'decoder_state': self.decoders[i].module.state_dict(),
+                            'discriminator_state': self.discriminator.module.state_dict(),
+                            'model_optimizer_state': self.model_optimizers[i].state_dict(),
+                            'dataset': self.args.rank,
+                            'd_optimizer_state': self.d_optimizer.state_dict()
+                            },
+                        save_path)
+                self.logger.debug(f'Saved model to {save_path}')
 
 
 def main():
