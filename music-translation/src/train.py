@@ -145,6 +145,9 @@ class Trainer:
             self.decoder = WaveNet(args)
         else:
             self.decoders = torch.nn.ModuleList([WaveNet(args) for _ in range(self.args.n_datasets)])
+        
+        print(self.encoder.module)
+        print(self.decoders[0].module)
 
         if args.checkpoint:
             checkpoint_args_path = os.path.dirname(args.checkpoint) + '/args.pth'
