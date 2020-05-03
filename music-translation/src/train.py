@@ -202,9 +202,16 @@ class Trainer:
                     self.model_optimizers[i].load_state_dict(states[i]['model_optimizer_state'])
                 self.d_optimizer.load_state_dict(states[0]['d_optimizer_state'])
 
-        self.lr_manager = torch.optim.lr_scheduler.ExponentialLR(self.model_optimizer, args.lr_decay)
-        self.lr_manager.last_epoch = self.start_epoch
-        self.lr_manager.step()
+        if args.distributed:
+            self.lr_manager = torch.optim.lr_scheduler.ExponentialLR(self.model_optimizer, args.lr_decay)
+            self.lr_manager.last_epoch = self.start_epoch
+            self.lr_manager.step()
+        else:
+            self.lr_managers = []
+            for i in range(self.args.n_datasets):
+                self.lr_managers.append(torch.optim.lr_scheduler.ExponentialLR(self.model_optimizer, args.lr_decay))
+                self.lr_managers[i].last_epoch = self.start_epoch
+                self.lr_manager[i].step()
 
     def eval_batch(self, x, x_aug, dset_num):
         x, x_aug = x.float(), x_aug.float()
@@ -378,7 +385,11 @@ class Trainer:
 
             self.logger.info(f'Epoch %s Rank {self.args.rank} - Train loss: (%s), Test loss (%s)',
                              epoch, self.train_losses(), self.eval_losses())
-            self.lr_manager.step()
+            if args.distributed:
+                self.lr_manager.step()
+            else:
+                for i in range(self.args.n_datasets):
+                    self.lr_managers[i].step()
             val_loss = self.eval_total.summarize_epoch()
 
             if val_loss < best_eval:
