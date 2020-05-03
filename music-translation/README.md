@@ -1,3 +1,6 @@
+# This folder is from https://github.com/facebookresearch/music-translation
+# Original repository licensed under CC-BY-NC-4.0
+
 # Music Translation
 PyTorch implementation of the method described in the [A Universal Music Translation Network](https://arxiv.org/abs/1805.07848).
 
