@@ -422,7 +422,7 @@ class Trainer:
     def save_model(self, filename):
         ## BUGFIX save model ##
         print(self.encoder.__dir__())
-        print(self.decoders[i].__dir__())
+        print(self.decoders[0].__dir__())
         if self.args.distributed:
             save_path = self.expPath / filename
             torch.save({'encoder_state': self.encoder.module.state_dict(),
