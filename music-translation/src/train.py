@@ -276,7 +276,7 @@ class Trainer:
 
         loss = (recon_loss.mean() + self.args.d_lambda * discriminator_wrong)
 
-        if args.distributed:
+        if self.args.distributed:
             self.model_optimizer.zero_grad()
         else:
             self.model_optimizers[dset_num].zero_grad()
@@ -285,7 +285,7 @@ class Trainer:
             clip_grad_value_(self.encoder.parameters(), self.args.grad_clip)
             clip_grad_value_(self.decoder.parameters(), self.args.grad_clip)
         ## BUGFIX model optimizer ##
-        if args.distributed:
+        if self.args.distributed:
             self.model_optimizer.step()
         else:
             self.model_optimizers[dset_num].step()
@@ -388,7 +388,7 @@ class Trainer:
 
             self.logger.info(f'Epoch %s Rank {self.args.rank} - Train loss: (%s), Test loss (%s)',
                              epoch, self.train_losses(), self.eval_losses())
-            if args.distributed:
+            if self.args.distributed:
                 self.lr_manager.step()
             else:
                 for i in range(self.args.n_datasets):
@@ -413,7 +413,7 @@ class Trainer:
 
     def save_model(self, filename):
         ## BUGFIX save model ##
-        if args.distributed:
+        if self.args.distributed:
             save_path = self.expPath / filename
             torch.save({'encoder_state': self.encoder.module.state_dict(),
                         'decoder_state': self.decoder.module.state_dict(),
