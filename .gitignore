@@ -8,3 +8,4 @@ temp/*
 *.ipynb_checkpoints
 music-translation/musicnet
 *.pt
+*.wav
