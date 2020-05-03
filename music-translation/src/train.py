@@ -145,25 +145,26 @@ class Trainer:
             self.decoder = WaveNet(args)
         else:
             self.decoders = torch.nn.ModuleList([WaveNet(args) for _ in range(self.args.n_datasets)])
-        
-        print(self.encoder.module)
-        print(self.decoders[0].module)
 
         if args.checkpoint:
             checkpoint_args_path = os.path.dirname(args.checkpoint) + '/args.pth'
             checkpoint_args = torch.load(checkpoint_args_path)
 
             self.start_epoch = checkpoint_args[-1] + 1
-            if self.distributed:
+            if args.distributed:
                 states = torch.load(args.checkpoint)
             else:
                 states = [torch.load(args.checkpoint + f'_{i}.pth')
                           for i in range(self.args.n_datasets)]
-
-            self.encoder.load_state_dict(states['encoder_state'])
             if args.distributed:
+                self.encoder.load_state_dict(states['encoder_state'])
                 self.decoder.load_state_dict(states['decoder_state'])
-            self.discriminator.load_state_dict(states['discriminator_state'])
+                self.discriminator.load_state_dict(states['discriminator_state'])
+            else:
+                self.encoder.load_state_dict(states[0]['encoder_state'])
+                for i in range(self.args.n_datasets):
+                    self.decoders[i].load_state_dict(states[i]['decoder_state'])
+                self.discriminator.load_state_dict(states[0]['discriminator_state'])
 
             self.logger.info('Loaded checkpoint parameters')
         else:
@@ -424,8 +425,6 @@ class Trainer:
 
     def save_model(self, filename):
         ## BUGFIX save model ##
-        print(self.encoder.__dir__())
-        print(self.decoders[0].__dir__())
         if self.args.distributed:
             save_path = self.expPath / filename
             torch.save({'encoder_state': self.encoder.module.state_dict(),
