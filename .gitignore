@@ -8,3 +8,5 @@ temp/*
 *.ipynb_checkpoints
 music-translation/musicnet
 *.pt
+*.wav
+seq2seq/pytorch tutorial/
