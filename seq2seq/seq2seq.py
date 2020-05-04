@@ -50,6 +50,7 @@ def main():
 @click.argument('path')
 def load_wav(path):
     waveform, sample_rate = torchaudio.load(path)
+    mu = mu_law_encode(waveform)
     ipy.embed()
 
 @main.command()
